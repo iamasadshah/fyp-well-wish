@@ -110,34 +110,61 @@ export default function UserPosts() {
     setDeleteModalOpen(true);
   };
 
-  const confirmDelete = async () => {
-    if (!postToDelete) return;
-
-    const { id, type } = postToDelete;
-
+  const handleDelete = async (
+    postId: string,
+    type: "caregiver" | "careseeker"
+  ) => {
     try {
-      const table = type === "caregiver" ? "caregivers" : "careseekers";
-      const { error } = await supabase.from(table).delete().eq("id", id);
+      if (type === "caregiver") {
+        // First, delete all associated bookings
+        const { error: bookingsError } = await supabase
+          .from("bookings")
+          .delete()
+          .eq("caregiver_id", postId);
 
-      if (error) throw error;
+        if (bookingsError) throw bookingsError;
 
+        // Then delete the caregiver post
+        const { error: deleteError } = await supabase
+          .from("caregivers")
+          .delete()
+          .eq("id", postId);
+
+        if (deleteError) throw deleteError;
+      } else {
+        // Delete careseeker post
+        const { error: deleteError } = await supabase
+          .from("careseekers")
+          .delete()
+          .eq("id", postId);
+
+        if (deleteError) throw deleteError;
+      }
+
+      // Update local state
+      fetchPosts();
       setToast({
         message: "Post deleted successfully",
         type: "success",
       });
-
-      // Refresh posts
-      fetchPosts();
-    } catch (error) {
-      console.error("Error deleting post:", error);
+    } catch (err) {
+      console.error("Error deleting post:", err);
       setToast({
-        message: "Failed to delete post",
+        message: "Failed to delete post. Please try again.",
         type: "error",
       });
-    } finally {
-      setDeleteModalOpen(false);
-      setPostToDelete(null);
     }
+  };
+
+  const confirmDelete = () => {
+    if (!postToDelete) return;
+
+    const { id, type } = postToDelete;
+
+    handleDelete(id, type);
+
+    setDeleteModalOpen(false);
+    setPostToDelete(null);
   };
 
   const cancelDelete = () => {
