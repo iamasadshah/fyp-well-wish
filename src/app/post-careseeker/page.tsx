@@ -240,10 +240,13 @@ export default function PostCareSeeker() {
                 } as React.ChangeEvent<HTMLSelectElement>)
               }
             >
-              <SelectTrigger>
+              <SelectTrigger
+                id="care_type"
+                className="w-full bg-white border border-gray-200"
+              >
                 <SelectValue placeholder="Select a care type" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg">
                 {careTypes.map((type) => (
                   <SelectItem key={type} value={type}>
                     {type}
@@ -303,10 +306,13 @@ export default function PostCareSeeker() {
                 } as React.ChangeEvent<HTMLSelectElement>)
               }
             >
-              <SelectTrigger>
+              <SelectTrigger
+                id="duration"
+                className="w-full bg-white border border-gray-200"
+              >
                 <SelectValue placeholder="Select duration" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg">
                 {durations.map((duration) => (
                   <SelectItem key={duration} value={duration}>
                     {duration}

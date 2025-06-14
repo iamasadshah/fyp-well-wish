@@ -348,11 +348,15 @@ export default function PostCaregiver() {
               onValueChange={handleSpecializationChange}
             >
               <SelectTrigger
-                className={cn(errors.specialization && "border-red-300")}
+                id="specialization"
+                className={cn(
+                  "w-full bg-white border border-gray-200",
+                  errors.specialization && "border-red-300"
+                )}
               >
                 <SelectValue placeholder="Select a specialization" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg">
                 {specializations.map((spec) => (
                   <SelectItem key={spec} value={spec}>
                     {spec}
@@ -417,11 +421,14 @@ export default function PostCaregiver() {
                 >
                   <SelectTrigger
                     id="startDay"
-                    className={cn(errors.availability && "border-red-300")}
+                    className={cn(
+                      "w-full bg-white border border-gray-200",
+                      errors.availability && "border-red-300"
+                    )}
                   >
                     <SelectValue placeholder="Select start day" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg">
                     {daysOfWeek.map((day) => (
                       <SelectItem key={day} value={day}>
                         {day}
@@ -441,11 +448,14 @@ export default function PostCaregiver() {
                 >
                   <SelectTrigger
                     id="endDay"
-                    className={cn(errors.availability && "border-red-300")}
+                    className={cn(
+                      "w-full bg-white border border-gray-200",
+                      errors.availability && "border-red-300"
+                    )}
                   >
                     <SelectValue placeholder="Select end day" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg">
                     {daysOfWeek.map((day) => (
                       <SelectItem key={day} value={day}>
                         {day}
