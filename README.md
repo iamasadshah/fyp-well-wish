@@ -17,7 +17,6 @@ Built as a Final Year Project, designed to scale into a real-world solution. ðŸš
 | Notifications    | [Supabase](https://supabase.com/)(in app notifications)                                                                  |
 | Payments         | [Stripe](https://stripe.com/)                                                                                            |
 | Version Control  | [GitHub](https://github.com/)                                                                                            |
-| Error Monitoring | [Sentry](https://sentry.io/)                                                                                             |
 | PWA Support      | Installable like a native app ðŸ“±                                                                                         |
 
 ---
