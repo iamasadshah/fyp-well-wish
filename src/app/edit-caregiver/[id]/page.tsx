@@ -7,6 +7,13 @@ import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 import { FiUpload, FiArrowLeft } from "react-icons/fi";
 import Toast from "@/components/ui/Toast";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 interface CaregiverForm {
   name: string;
@@ -17,14 +24,6 @@ interface CaregiverForm {
   availability: string;
   image: File | null;
 }
-
-const specializations = [
-  "Elder Care",
-  "Child Care",
-  "Special Needs Care",
-  "Post-Surgery Care",
-  "Palliative Care",
-];
 
 const experiences = [
   "Less than 1 year",
@@ -352,42 +351,22 @@ export default function EditCaregiverPage({
                     >
                       Specialization
                     </label>
-                    <select
+                    <input
+                      type="text"
                       id="specialization"
                       name="specialization"
+                      placeholder="Enter your specialization (e.g., Elderly Care, Pediatric Care, etc.)"
                       value={formData.specialization}
                       onChange={handleInputChange}
-                      className={`block w-full px-4 py-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:border-[#00b4d8] focus:ring-2 focus:ring-[#00b4d8]/20 focus:outline-none transition-all duration-200 appearance-none bg-no-repeat bg-[length:1.5em_1.5em] bg-[right_1rem_center] ${
+                      className={`block w-full px-4 py-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:border-[#00b4d8] focus:ring-2 focus:ring-[#00b4d8]/20 focus:outline-none transition-all duration-200 ${
                         formErrors.specialization
                           ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
                           : ""
                       }`}
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                      }}
-                    >
-                      <option value="">Select your specialization</option>
-                      {specializations.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
+                      required
+                    />
                     {formErrors.specialization && (
                       <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
                         {formErrors.specialization}
                       </p>
                     )}

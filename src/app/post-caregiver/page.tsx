@@ -33,15 +33,6 @@ interface CaregiverForm {
   image: File | null;
 }
 
-const specializations = [
-  "Elderly Care",
-  "Pediatric Care",
-  "Disability Care",
-  "Post-Surgery Care",
-  "Dementia Care",
-  "Mental Health Care",
-];
-
 const daysOfWeek = [
   "Monday",
   "Tuesday",
@@ -64,6 +55,7 @@ export default function PostCaregiver() {
   const [errors, setErrors] = useState<
     Partial<Record<keyof CaregiverForm, string>>
   >({});
+  const [customSpecialization, setCustomSpecialization] = useState("");
 
   const [formData, setFormData] = useState<CaregiverForm>({
     name: "",
@@ -92,7 +84,7 @@ export default function PostCaregiver() {
     }
 
     if (!formData.specialization) {
-      newErrors.specialization = "Please select a specialization";
+      newErrors.specialization = "Please enter a specialization";
     }
 
     if (!formData.experience.trim()) {
@@ -135,7 +127,12 @@ export default function PostCaregiver() {
   };
 
   const handleSpecializationChange = (value: string) => {
-    setFormData({ ...formData, specialization: value });
+    if (value === "Other") {
+      setFormData({ ...formData, specialization: "" });
+    } else {
+      setFormData({ ...formData, specialization: value });
+      setCustomSpecialization("");
+    }
   };
 
   const handleExperienceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -343,27 +340,16 @@ export default function PostCaregiver() {
           {/* Specialization */}
           <div className="space-y-2">
             <Label htmlFor="specialization">Specialization</Label>
-            <Select
+            <Input
+              id="specialization"
+              placeholder="Enter your specialization (e.g., Elderly Care, Pediatric Care, etc.)"
               value={formData.specialization}
-              onValueChange={handleSpecializationChange}
-            >
-              <SelectTrigger
-                id="specialization"
-                className={cn(
-                  "w-full bg-white border border-gray-200",
-                  errors.specialization && "border-red-300"
-                )}
-              >
-                <SelectValue placeholder="Select a specialization" />
-              </SelectTrigger>
-              <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                {specializations.map((spec) => (
-                  <SelectItem key={spec} value={spec}>
-                    {spec}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={(e) =>
+                setFormData({ ...formData, specialization: e.target.value })
+              }
+              className={cn(errors.specialization && "border-red-300")}
+              required
+            />
             {errors.specialization && (
               <p className="text-sm text-red-600">{errors.specialization}</p>
             )}
