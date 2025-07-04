@@ -30,16 +30,6 @@ interface CareSeekerForm {
   image: File | null;
 }
 
-const careTypes = [
-  "Elderly Care",
-  "Child Care",
-  "Special Needs Care",
-  "Pet Care",
-  "Housekeeping",
-  "Post-Surgery Care",
-  "Mental Health Care",
-];
-
 const durations = [
   "One-time",
   "Short-term (1-2 weeks)",
@@ -64,6 +54,24 @@ export default function PostCareSeeker() {
     message: string;
     type: "success" | "error";
   } | null>(null);
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof CareSeekerForm, string>>
+  >({});
+
+  const validateForm = () => {
+    const newErrors: Partial<Record<keyof CareSeekerForm, string>> = {};
+    if (!formData.title.trim()) newErrors.title = "Title is required";
+    if (!formData.description.trim() || formData.description.length < 50)
+      newErrors.description = "Description must be at least 50 characters";
+    if (!formData.care_type.trim())
+      newErrors.care_type = "Care type is required";
+    if (!formData.location.trim()) newErrors.location = "Location is required";
+    if (!formData.budget || formData.budget <= 0)
+      newErrors.budget = "Budget is required";
+    if (!formData.duration.trim()) newErrors.duration = "Duration is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -95,6 +103,7 @@ export default function PostCareSeeker() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    if (!validateForm()) return;
 
     try {
       let imageUrl = "";
@@ -232,28 +241,18 @@ export default function PostCareSeeker() {
           {/* Care Type */}
           <div className="space-y-2">
             <Label htmlFor="care_type">Care Type</Label>
-            <Select
+            <Input
+              id="care_type"
+              name="care_type"
+              placeholder="Enter the type of care needed (e.g., Elderly Care, Child Care, etc.)"
               value={formData.care_type}
-              onValueChange={(value) =>
-                handleInputChange({
-                  target: { name: "care_type", value },
-                } as React.ChangeEvent<HTMLSelectElement>)
-              }
-            >
-              <SelectTrigger
-                id="care_type"
-                className="w-full bg-white border border-gray-200"
-              >
-                <SelectValue placeholder="Select a care type" />
-              </SelectTrigger>
-              <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                {careTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={handleInputChange}
+              className={cn(errors?.care_type && "border-red-300")}
+              required
+            />
+            {errors?.care_type && (
+              <p className="text-sm text-red-600">{errors.care_type}</p>
+            )}
           </div>
 
           {/* Location */}

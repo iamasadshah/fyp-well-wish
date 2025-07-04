@@ -18,14 +18,6 @@ interface CareseekerForm {
   image: File | null;
 }
 
-const careTypes = [
-  "Elder Care",
-  "Child Care",
-  "Special Needs Care",
-  "Post-Surgery Care",
-  "Palliative Care",
-];
-
 const availabilities = [
   "Full-time",
   "Part-time",
@@ -379,44 +371,24 @@ export default function EditCareseekerPage({
                       htmlFor="care_type"
                       className="block text-sm font-medium text-gray-700 mb-2"
                     >
-                      Type of Care Needed
+                      Care Type
                     </label>
-                    <select
+                    <input
+                      type="text"
                       id="care_type"
                       name="care_type"
+                      placeholder="Enter the type of care needed (e.g., Elderly Care, Child Care, etc.)"
                       value={formData.care_type}
                       onChange={handleInputChange}
-                      className={`block w-full px-4 py-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:border-[#00b4d8] focus:ring-2 focus:ring-[#00b4d8]/20 focus:outline-none transition-all duration-200 appearance-none bg-no-repeat bg-[length:1.5em_1.5em] bg-[right_1rem_center] ${
+                      className={`block w-full px-4 py-3 rounded-lg border border-gray-200 bg-white shadow-sm focus:border-[#00b4d8] focus:ring-2 focus:ring-[#00b4d8]/20 focus:outline-none transition-all duration-200 ${
                         formErrors.care_type
                           ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
                           : ""
                       }`}
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                      }}
-                    >
-                      <option value="">Select type of care needed</option>
-                      {careTypes.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
+                      required
+                    />
                     {formErrors.care_type && (
                       <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
                         {formErrors.care_type}
                       </p>
                     )}
