@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   FaStar,
   FaRegStar,
@@ -73,6 +73,9 @@ export default function FindCaregiver() {
   const [bookingStatuses, setBookingStatuses] = useState<
     Record<string, string>
   >({});
+  const [specializationInput, setSpecializationInput] = useState("");
+  const [showSpecDropdown, setShowSpecDropdown] = useState(false);
+  const specInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch caregivers from Supabase
   useEffect(() => {
@@ -112,8 +115,10 @@ export default function FindCaregiver() {
       caregiver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       caregiver.bio.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesSpecialization =
-      selectedSpecialization === "all" ||
-      caregiver.specialization === selectedSpecialization;
+      !specializationInput.trim() ||
+      caregiver.specialization
+        .toLowerCase()
+        .includes(specializationInput.trim().toLowerCase());
     return matchesSearch && matchesSpecialization;
   });
 
@@ -362,6 +367,33 @@ export default function FindCaregiver() {
     }
   };
 
+  const uniqueSpecs = Array.from(
+    new Set(userCaregivers.map((c) => c.specialization).filter(Boolean))
+  );
+
+  const filteredSpecs = uniqueSpecs.filter((spec) =>
+    spec.toLowerCase().includes(specializationInput.trim().toLowerCase())
+  );
+
+  const handleSpecSelect = (spec: string) => {
+    setSelectedSpecialization(spec);
+    setSpecializationInput(spec);
+    setShowSpecDropdown(false);
+  };
+
+  const handleSpecInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSpecializationInput(e.target.value.trimStart());
+    setShowSpecDropdown(true);
+    setSelectedSpecialization("");
+  };
+
+  const handleClearSpec = () => {
+    setSpecializationInput("");
+    setSelectedSpecialization("all");
+    setShowSpecDropdown(false);
+    if (specInputRef.current) specInputRef.current.blur();
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
@@ -461,19 +493,41 @@ export default function FindCaregiver() {
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-          <select
-            value={selectedSpecialization}
-            onChange={(e) => setSelectedSpecialization(e.target.value)}
-            className="w-full sm:w-48 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            {specializations.map((specialization) => (
-              <option key={specialization} value={specialization}>
-                {specialization === "all"
-                  ? "All Specializations"
-                  : specialization}
-              </option>
-            ))}
-          </select>
+          <div className="relative w-full sm:w-64">
+            <input
+              ref={specInputRef}
+              type="text"
+              placeholder="Filter by specialization..."
+              value={specializationInput}
+              onChange={handleSpecInputChange}
+              onFocus={() => setShowSpecDropdown(true)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              autoComplete="off"
+            />
+            {specializationInput && (
+              <button
+                type="button"
+                onClick={handleClearSpec}
+                className="absolute right-2 top-2 text-gray-400 hover:text-gray-600"
+                aria-label="Clear"
+              >
+                ×
+              </button>
+            )}
+            {showSpecDropdown && filteredSpecs.length > 0 && (
+              <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto">
+                {filteredSpecs.map((spec) => (
+                  <li
+                    key={spec}
+                    onClick={() => handleSpecSelect(spec)}
+                    className="px-4 py-2 cursor-pointer hover:bg-blue-50"
+                  >
+                    {spec}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
         {/* Caregivers Grid */}
