@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -35,6 +35,9 @@ export default function FindCareSeeker() {
   const [error, setError] = useState<string | null>(null);
   const [appliedPosts, setAppliedPosts] = useState<Set<string>>(new Set());
   const [sendingEmails, setSendingEmails] = useState<Set<string>>(new Set());
+  const [workTypeInput, setWorkTypeInput] = useState("");
+  const [showWorkDropdown, setShowWorkDropdown] = useState(false);
+  const workInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize EmailJS
   useEffect(() => {
@@ -204,7 +207,10 @@ WellWish Team`,
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesWork =
-      selectedWork === "all" || seeker.care_type === selectedWork;
+      !workTypeInput.trim() ||
+      seeker.care_type
+        .toLowerCase()
+        .includes(workTypeInput.trim().toLowerCase());
     return matchesSearch && matchesWork;
   });
 
@@ -220,6 +226,33 @@ WellWish Team`,
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const uniqueWorkTypes = Array.from(
+    new Set(careSeekers.map((s) => s.care_type).filter(Boolean))
+  );
+
+  const filteredWorkTypes = uniqueWorkTypes.filter((work) =>
+    work.toLowerCase().includes(workTypeInput.trim().toLowerCase())
+  );
+
+  const handleWorkSelect = (work: string) => {
+    setSelectedWork(work);
+    setWorkTypeInput(work);
+    setShowWorkDropdown(false);
+  };
+
+  const handleWorkInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWorkTypeInput(e.target.value.trimStart());
+    setShowWorkDropdown(true);
+    setSelectedWork("");
+  };
+
+  const handleClearWork = () => {
+    setWorkTypeInput("");
+    setSelectedWork("all");
+    setShowWorkDropdown(false);
+    if (workInputRef.current) workInputRef.current.blur();
   };
 
   if (isLoading) {
@@ -282,17 +315,41 @@ WellWish Team`,
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-          <select
-            value={selectedWork}
-            onChange={(e) => setSelectedWork(e.target.value)}
-            className="w-full sm:w-48 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            {workTypes.map((work) => (
-              <option key={work} value={work}>
-                {work === "all" ? "All Work Types" : work}
-              </option>
-            ))}
-          </select>
+          <div className="relative w-full sm:w-64">
+            <input
+              ref={workInputRef}
+              type="text"
+              placeholder="Filter by work type..."
+              value={workTypeInput}
+              onChange={handleWorkInputChange}
+              onFocus={() => setShowWorkDropdown(true)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              autoComplete="off"
+            />
+            {workTypeInput && (
+              <button
+                type="button"
+                onClick={handleClearWork}
+                className="absolute right-2 top-2 text-gray-400 hover:text-gray-600"
+                aria-label="Clear"
+              >
+                ×
+              </button>
+            )}
+            {showWorkDropdown && filteredWorkTypes.length > 0 && (
+              <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto">
+                {filteredWorkTypes.map((work) => (
+                  <li
+                    key={work}
+                    onClick={() => handleWorkSelect(work)}
+                    className="px-4 py-2 cursor-pointer hover:bg-blue-50"
+                  >
+                    {work}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
         {/* Care Seekers Grid */}
