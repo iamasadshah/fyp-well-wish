@@ -8,20 +8,23 @@ import { useAuth } from "@/context/AuthContext";
 import { usePathname, useRouter } from "next/navigation";
 import Notifications from "./Notifications";
 
+// List of navigation links for the navbar
 const navLinks = [
   { href: "/find-caregiver", label: "Find CareGiver" },
   { href: "/find-careseeker", label: "Find CareSeeker" },
   { href: "/about", label: "About" },
 ];
 
+// Navbar component displays the top navigation bar with links and user actions
 export default function Navbar() {
+  // State for mobile menu and scroll effect
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { user, signOut } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
 
-  // Handle scroll effect
+  // Handle scroll effect to change navbar style
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -35,6 +38,7 @@ export default function Navbar() {
     setIsMenuOpen(false);
   }, [pathname]);
 
+  // Handle user logout and redirect
   const handleLogout = async () => {
     try {
       await signOut();
@@ -45,6 +49,7 @@ export default function Navbar() {
   };
 
   return (
+    // Main navbar container, fixed at the top
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
         isScrolled
@@ -54,7 +59,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          {/* Logo */}
+          {/* Logo and brand name */}
           <Link
             href="/"
             className="flex items-center space-x-2 transition-transform hover:scale-105"
@@ -71,7 +76,7 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
               <Link
@@ -84,6 +89,7 @@ export default function Navbar() {
                 }`}
               >
                 {link.label}
+                {/* Highlight active link */}
                 {pathname === link.href && (
                   <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 transform origin-left transition-transform duration-300" />
                 )}
@@ -91,7 +97,7 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Right Side Actions */}
+          {/* Right Side Actions: Profile, Notifications, Auth */}
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <div className="flex items-center space-x-4">
@@ -128,7 +134,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu button for small screens */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-colors duration-200"
@@ -143,7 +149,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile menu dropdown */}
       <div
         className={`md:hidden transition-all duration-300 ease-in-out ${
           isMenuOpen

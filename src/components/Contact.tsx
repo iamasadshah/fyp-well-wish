@@ -6,6 +6,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 
+// List of contact topics for the dropdown
 const topics = [
   "General Inquiry",
   "Become a Caregiver",
@@ -15,7 +16,9 @@ const topics = [
   "Other",
 ];
 
+// Contact component provides a contact form with email sending and reCAPTCHA
 export default function Contact() {
+  // State for form fields
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -24,6 +27,7 @@ export default function Contact() {
     message: "",
   });
 
+  // State for loading, submission status, dialog, and reCAPTCHA
   const [isLoading, setIsLoading] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: "success" | "error" | null;
@@ -33,6 +37,7 @@ export default function Contact() {
   const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
+  // Handles form submission, including reCAPTCHA and email sending
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -48,6 +53,7 @@ export default function Contact() {
     setSubmitStatus({ type: null, message: "" });
 
     try {
+      // Prepare email template parameters
       const templateParams = {
         from_name: `${formData.firstName} ${formData.lastName}`,
         from_email: formData.email,
@@ -55,6 +61,7 @@ export default function Contact() {
         message: formData.message,
       };
 
+      // Send email using EmailJS
       await emailjs.send(
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
@@ -90,10 +97,11 @@ export default function Contact() {
   };
 
   return (
+    // Main contact section with form and info
     <section className="min-h-screen py-24 px-4" id="contact">
       <div className="container mx-auto max-w-6xl">
         <div className="flex flex-col lg:flex-row gap-16">
-          {/* Left Content */}
+          {/* Left Content: Info and FAQ link */}
           <div className="lg:w-1/3">
             <h1 className="text-5xl font-bold text-[#03045e] mb-6">
               Get in Touch
@@ -112,8 +120,9 @@ export default function Contact() {
             </Link>
           </div>
 
-          {/* Right Content - Contact Form */}
+          {/* Right Content: Contact Form */}
           <div className="lg:w-2/3">
+            {/* Error message if submission fails */}
             {submitStatus.type === "error" && (
               <div className="mb-6 p-4 rounded-lg bg-red-100 text-red-700">
                 {submitStatus.message}
@@ -181,7 +190,7 @@ export default function Contact() {
                 />
               </div>
 
-              {/* Topic Selection */}
+              {/* Topic Selection Dropdown */}
               <div className="space-y-2 text-[#03045e]">
                 <label htmlFor="topic" className="block text-lg">
                   What is your message about?
@@ -207,6 +216,7 @@ export default function Contact() {
                       </option>
                     ))}
                   </select>
+                  {/* Dropdown arrow icon */}
                   <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
                     <svg
                       className="w-5 h-5"
@@ -247,7 +257,7 @@ export default function Contact() {
                 />
               </div>
 
-              {/* reCAPTCHA */}
+              {/* reCAPTCHA for spam prevention */}
               <div className="flex justify-center">
                 <ReCAPTCHA
                   ref={recaptchaRef}

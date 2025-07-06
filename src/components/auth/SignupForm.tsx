@@ -10,7 +10,9 @@ interface ToastState {
   type: "success" | "error";
 }
 
+// SignupForm component provides a user registration form with authentication and feedback
 export default function SignupForm() {
+  // State for email, password, full name, loading, and toast messages
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -19,6 +21,7 @@ export default function SignupForm() {
   const { signUp } = useAuth();
   const router = useRouter();
 
+  // Handles form submission and registration
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -34,7 +37,7 @@ export default function SignupForm() {
         });
         return;
       }
-      router.push("/profile");
+      router.push("/profile"); // Redirect to profile on success
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "An unexpected error occurred";
@@ -49,6 +52,7 @@ export default function SignupForm() {
 
   return (
     <>
+      {/* Signup form with full name, email, and password fields */}
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div>
           <label
@@ -124,6 +128,7 @@ export default function SignupForm() {
           </div>
         </div>
 
+        {/* Submit button */}
         <div>
           <button
             type="submit"
@@ -135,6 +140,7 @@ export default function SignupForm() {
         </div>
       </form>
 
+      {/* Toast notification for feedback */}
       {toast && (
         <Toast
           message={toast.message}

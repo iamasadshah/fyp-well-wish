@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import { FaChevronLeft, FaChevronRight, FaQuoteRight } from "react-icons/fa";
 
+// List of testimonials to display in the carousel
 const testimonials = [
   {
     name: "Olivia Wilson",
@@ -21,10 +22,13 @@ const testimonials = [
   },
 ];
 
+// Testimonials component displays a carousel of user testimonials
 export default function Testimonials() {
+  // State for current testimonial index and animation
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
+  // Handler for previous testimonial navigation
   const handlePrevious = useCallback(() => {
     if (isAnimating) return;
     setIsAnimating(true);
@@ -34,6 +38,7 @@ export default function Testimonials() {
     setTimeout(() => setIsAnimating(false), 500);
   }, [isAnimating]);
 
+  // Handler for next testimonial navigation
   const handleNext = useCallback(() => {
     if (isAnimating) return;
     setIsAnimating(true);
@@ -43,23 +48,25 @@ export default function Testimonials() {
     setTimeout(() => setIsAnimating(false), 500);
   }, [isAnimating]);
 
+  // Auto-advance testimonials every 8 seconds
   useEffect(() => {
     const interval = setInterval(handleNext, 8000); // Auto-advance every 8 seconds
     return () => clearInterval(interval);
   }, [handleNext]);
 
   return (
+    // Main testimonials section with carousel
     <section className="py-12 md:py-0 min-h-screen relative overflow-hidden">
       <h2 className="text-center text-3xl font-bold my-4 md:text-4xl">
         Testimonials
       </h2>
       <div className="container mx-auto px-4 max-w-6xl relative">
-        {/* Quote Icon */}
+        {/* Quote Icon for decoration */}
         <div className="absolute top-0 right-8 text-[#90e0ef] opacity-50">
           <FaQuoteRight size={120} />
         </div>
 
-        {/* Testimonial Content */}
+        {/* Testimonial Content: Only the current testimonial is visible */}
         <div className="relative min-h-[400px]">
           {testimonials.map((testimonial, index) => (
             <div
@@ -95,7 +102,7 @@ export default function Testimonials() {
           ))}
         </div>
 
-        {/* Navigation Buttons */}
+        {/* Navigation Buttons for carousel */}
         <div className="flex justify-between absolute top-1/2 -translate-y-1/2 left-0 right-0 px-4">
           <button
             onClick={handlePrevious}

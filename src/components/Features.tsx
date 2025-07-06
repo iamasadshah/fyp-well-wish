@@ -1,5 +1,6 @@
 import React from "react";
 
+// List of features to display on the features section
 const features = [
   {
     tag: "#one",
@@ -27,12 +28,14 @@ const features = [
   },
 ];
 
+// Features component displays a grid of feature cards
 export default function Features() {
   return (
     <section className="bg-[#caf0f8] py-24 px-4 ">
       <div className="container mx-auto max-w-7xl">
         <h1 className="text-6xl font-bold text-text mb-16">Features</h1>
 
+        {/* Feature cards grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
             <div key={index} className="group relative">

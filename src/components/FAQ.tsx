@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
+// List of frequently asked questions and answers
 const faqs = [
   {
     question: "Do I need Experience?",
@@ -25,9 +26,12 @@ const faqs = [
   },
 ];
 
+// FAQ component displays a list of FAQs in an accordion style
 export default function FAQ() {
+  // State to track which question is open
   const [openQuestion, setOpenQuestion] = useState<number | null>(null);
 
+  // Toggle the open/close state of a question
   const toggleQuestion = (index: number) => {
     setOpenQuestion(openQuestion === index ? null : index);
   };
@@ -39,7 +43,7 @@ export default function FAQ() {
     >
       <div className="container mx-auto max-w-6xl">
         <div className="flex flex-col lg:flex-row gap-16">
-          {/* Left Content */}
+          {/* Left Content: FAQ heading and contact link */}
           <div className="lg:w-1/3">
             <h1 className="text-5xl font-bold text-[#00b4d8] mb-6">
               Frequently Asked Questions
@@ -70,7 +74,7 @@ export default function FAQ() {
             </Link>
           </div>
 
-          {/* Right Content - FAQ Accordion */}
+          {/* Right Content: FAQ Accordion */}
           <div className="lg:w-2/3 space-y-4">
             {faqs.map((faq, index) => (
               <div key={index} className="relative">
@@ -99,6 +103,7 @@ export default function FAQ() {
                     </svg>
                   </span>
                 </button>
+                {/* Show answer if this question is open */}
                 {openQuestion === index && (
                   <div className="mt-2 px-8 py-6 text-[#03045e] text-lg leading-relaxed">
                     {faq.answer}

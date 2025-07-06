@@ -11,7 +11,9 @@ interface ToastState {
   type: "success" | "error";
 }
 
+// LoginForm component provides a user login form with authentication and feedback
 export default function LoginForm() {
+  // State for email, password, loading, and toast messages
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -19,6 +21,7 @@ export default function LoginForm() {
   const { signIn } = useAuth();
   const router = useRouter();
 
+  // Handles form submission and authentication
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -34,7 +37,7 @@ export default function LoginForm() {
         });
         return;
       }
-      router.push("/profile");
+      router.push("/profile"); // Redirect to profile on success
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "An unexpected error occurred";
@@ -49,6 +52,7 @@ export default function LoginForm() {
 
   return (
     <>
+      {/* Login form with email and password fields */}
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div>
           <label
@@ -100,6 +104,7 @@ export default function LoginForm() {
           </div>
         </div>
 
+        {/* Remember me and forgot password options */}
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <input
@@ -126,6 +131,7 @@ export default function LoginForm() {
           </div>
         </div>
 
+        {/* Submit button */}
         <div>
           <button
             type="submit"
@@ -137,6 +143,7 @@ export default function LoginForm() {
         </div>
       </form>
 
+      {/* Toast notification for feedback */}
       {toast && (
         <Toast
           message={toast.message}

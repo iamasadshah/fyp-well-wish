@@ -1,15 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 
+// About component displays the About section with an image and description for WellWish
 export default function About() {
   return (
+    // Main section with padding and minimum height
     <section className=" min-h-screen py-24 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="flex flex-col lg:flex-row items-center gap-12">
           {/* Left Image Section */}
           <div className="w-full lg:w-1/2">
             <div className="relative">
-              {/* Custom shaped image container */}
+              {/* Custom shaped image container using clipPath for unique shape */}
               <div className="relative aspect-[4/3] w-full">
                 <div
                   className="absolute inset-0 rounded-[3rem] overflow-hidden"
@@ -17,6 +19,7 @@ export default function About() {
                     clipPath: "polygon(0% 0%, 100% 0%, 85% 100%, 0% 85%)",
                   }}
                 >
+                  {/* Main about image, fills the container */}
                   <Image
                     src="/assets/about.jpg"
                     alt="About WellWish"
@@ -25,17 +28,18 @@ export default function About() {
                     priority
                   />
                 </div>
-                {/* Floating elements */}
+                {/* Floating decorative elements for visual interest */}
                 <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary-light/20 rounded-full animate-pulse"></div>
                 <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-primary/20 rounded-full animate-pulse delay-150"></div>
               </div>
             </div>
           </div>
 
-          {/* Right Content Section */}
+          {/* Right Content Section with heading, description, and link */}
           <div className="w-full lg:w-1/2 space-y-6">
             <h2 className="text-5xl font-bold text-text">About</h2>
             <p className="text-lg text-text leading-relaxed">
+              {/* Description of WellWish's mission and platform */}
               At WellWish, we believe in transforming the way care is delivered
               and received. Our platform connects compassionate caregivers with
               those who need them, creating meaningful relationships that go
@@ -43,6 +47,7 @@ export default function About() {
               quality care accessible, personal, and seamless for everyone
               involved.
             </p>
+            {/* Read more link styled as a button with an arrow icon */}
             <Link href="/about" className="inline-flex items-center group">
               <span className="bg-[#00b4d8] text-text px-6 py-3 rounded-l-full font-medium">
                 Read more

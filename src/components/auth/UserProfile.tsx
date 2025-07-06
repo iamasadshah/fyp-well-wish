@@ -6,6 +6,7 @@ import Image from "next/image";
 import { FiEdit2, FiSave, FiX, FiUpload } from "react-icons/fi";
 import Toast from "../ui/Toast";
 
+// Profile interface defines the structure of user profile data
 interface Profile {
   id: string;
   full_name: string;
@@ -19,8 +20,10 @@ interface Profile {
   languages: string[];
 }
 
+// UserProfile component displays and allows editing of the user's profile
 export default function UserProfile() {
   const { user } = useAuth();
+  // State for profile data, editing, loading, avatar, and toast
   const [profile, setProfile] = useState<Profile>({
     id: user?.id || "",
     full_name: "",
@@ -43,6 +46,7 @@ export default function UserProfile() {
     type: "success" | "error";
   } | null>(null);
 
+  // Fetches the user profile from Supabase or creates one if not found
   const getProfile = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -107,12 +111,14 @@ export default function UserProfile() {
     }
   }, [user?.id, user?.email]);
 
+  // Fetch profile on mount or when user changes
   useEffect(() => {
     if (user?.id) {
       getProfile();
     }
   }, [user?.id, getProfile]);
 
+  // Handles avatar file selection and preview
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -121,6 +127,7 @@ export default function UserProfile() {
     }
   };
 
+  // Uploads the avatar image to Supabase storage and returns the public URL
   const uploadAvatar = async () => {
     if (!avatarFile || !user?.id) return null;
 
@@ -153,6 +160,7 @@ export default function UserProfile() {
     }
   };
 
+  // Updates the user profile in Supabase
   const updateProfile = async () => {
     if (!user?.id) return;
 
@@ -198,6 +206,7 @@ export default function UserProfile() {
     }
   };
 
+  // If user is not logged in, show a message
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -211,7 +220,7 @@ export default function UserProfile() {
       <div className="max-w-7xl mx-auto">
         {/* Main Profile Card */}
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-          {/* Profile Header with Gradient */}
+          {/* Profile Header with Gradient and Avatar */}
           <div className="relative h-72 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600">
             <div className="absolute inset-0 bg-black/10 backdrop-blur-sm"></div>
             <div className="absolute -bottom-28 left-8">
@@ -232,6 +241,7 @@ export default function UserProfile() {
                     </div>
                   )}
                 </div>
+                {/* Avatar upload button when editing */}
                 {isEditing && (
                   <label
                     htmlFor="avatar-upload"

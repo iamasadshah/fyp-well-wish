@@ -1,11 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 
+// Hero component displays the main landing section with a call to action
 export default function Hero() {
   return (
+    // Main hero section with background and layout
     <section className=" min-h-screen py-24 px-4 overflow-hidden">
       <div className="container bg-gradient-to-br from-[#aaecf9] to-[#00b4d8] rounded-blob mx-auto flex flex-col-reverse lg:flex-row items-center max-w-6xl rounded-2xl px-6 shadow-xl shadow-gray-500 py-4 ">
-        {/* Left Content */}
+        {/* Left Content: Tagline, heading, description, and CTA button */}
         <div className="w-full lg:w-1/2 space-y-6 pt-8 lg:pt-0">
           <span className="inline-block bg-[#00b4d8] text-primary-dark px-4 py-2 rounded-full text-sm font-medium">
             #wellwish
@@ -20,6 +22,7 @@ export default function Hero() {
             Because sometimes, a little care is all it takes to change a life.
           </p>
 
+          {/* Call to action button for signup */}
           <Link
             href="/signup"
             className="inline-flex items-center bg-white text-[#00b4d8] px-8 py-3 rounded-full hover:bg-primary transition-colors text-lg font-medium group"
@@ -42,10 +45,10 @@ export default function Hero() {
           </Link>
         </div>
 
-        {/* Right Image */}
+        {/* Right Image: Main hero image with decorative container */}
         <div className="w-full lg:w-1/2 relative flex flex-col justify-center items-center">
           <div className="relative w-full aspect-square max-w-[500px] mx-auto ">
-            {/* Main Image Container */}
+            {/* Main Image Container with rounded shape */}
             <div className="absolute inset-8 overflow-hidden rounded-blob transform  h-full w-full">
               <Image
                 src="/assets/hero-img.png"
@@ -57,9 +60,11 @@ export default function Hero() {
               />
             </div>
 
-            {/* Decorative Elements
+            {/* Decorative Elements (commented out) */}
+            {/*
             <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary-lightest rounded-full animate-pulse"></div>
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-primary-dark/20 rounded-full animate-pulse delay-150"></div> */}
+            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-primary-dark/20 rounded-full animate-pulse delay-150"></div>
+            */}
           </div>
         </div>
       </div>

@@ -4,22 +4,25 @@ import { supabase } from "@/lib/supabase";
 import { User, Session } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 
+// Define the shape of the authentication context
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: unknown }>;
+  user: User | null; // Current authenticated user, or null if not logged in
+  session: Session | null; // Current session object, or null if not logged in
+  loading: boolean; // Whether authentication state is being determined
+  signIn: (email: string, password: string) => Promise<{ error: unknown }>; // Sign in with email/password
   signUp: (
     email: string,
     password: string,
     metadata?: Record<string, unknown>
-  ) => Promise<{ error: unknown }>;
-  signInWithGoogle: () => Promise<{ error: unknown }>;
-  signOut: () => Promise<void>;
+  ) => Promise<{ error: unknown }>; // Sign up with email/password and optional metadata
+  signInWithGoogle: () => Promise<{ error: unknown }>; // Sign in with Google OAuth
+  signOut: () => Promise<void>; // Sign out the current user
 }
 
+// Create the authentication context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// AuthProvider wraps the app and provides authentication state and actions
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -27,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Get initial session
+    // Get initial session from Supabase on mount
     const initializeAuth = async () => {
       try {
         const {
@@ -36,6 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } = await supabase.auth.getSession();
         if (error) throw error;
 
+        // Log session details for debugging
         console.log("Initial session:", {
           hasSession: !!initialSession,
           userEmail: initialSession?.user?.email,
@@ -53,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initializeAuth();
 
-    // Listen for auth changes
+    // Listen for authentication state changes (login, logout, etc.)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
@@ -66,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (event === "SIGNED_OUT") {
         setSession(null);
         setUser(null);
-        router.push("/");
+        router.push("/"); // Redirect to home on sign out
       } else {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
@@ -74,9 +78,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
+    // Cleanup subscription on unmount
     return () => subscription.unsubscribe();
   }, [router]);
 
+  // Sign in with email and password
   const signIn = async (email: string, password: string) => {
     try {
       const { error } = await supabase.auth.signInWithPassword({
@@ -89,6 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Sign up with email, password, and optional metadata
   const signUp = async (
     email: string,
     password: string,
@@ -108,12 +115,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Sign in using Google OAuth provider
   const signInWithGoogle = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/profile`,
+          redirectTo: `${window.location.origin}/profile`, // Redirect after login
         },
       });
       return { error };
@@ -122,17 +130,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Sign out the current user and clear session
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
       setSession(null);
       setUser(null);
-      router.push("/");
+      router.push("/"); // Redirect to home after sign out
     } catch (error) {
       console.error("Error signing out:", error);
     }
   };
 
+  // Value provided to context consumers
   const value = {
     user,
     session,
@@ -143,6 +153,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
   };
 
+  // Only render children when not loading (prevents flicker)
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
@@ -150,6 +161,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Custom hook to access authentication context
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
