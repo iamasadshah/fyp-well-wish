@@ -22,6 +22,11 @@ export default function SignupForm() {
   const router = useRouter();
   const [phone, setPhone] = useState("");
   const [passwordStrength, setPasswordStrength] = useState("");
+  const [errors, setErrors] = useState<{
+    fullName?: string;
+    email?: string;
+    password?: string;
+  }>({});
 
   // Password strength checker
   const checkPasswordStrength = (pwd: string) => {
@@ -36,9 +41,23 @@ export default function SignupForm() {
     return strength === "Strong";
   };
 
+  const validate = () => {
+    const newErrors: { fullName?: string; email?: string; password?: string } =
+      {};
+    if (!fullName.trim()) newErrors.fullName = "Please enter your full name.";
+    if (!email.trim()) newErrors.email = "Please enter your Gmail address.";
+    else if (!/^[^@\s]+@gmail\.com$/.test(email.trim()))
+      newErrors.email =
+        "Please provide a valid Gmail address (ending with @gmail.com).";
+    if (!password) newErrors.password = "Please enter a password.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   // Handles form submission and registration
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validate()) return;
     setIsLoading(true);
     if (!checkPasswordStrength(password)) {
       setToast({ message: "Password is not strong enough.", type: "error" });
@@ -77,6 +96,11 @@ export default function SignupForm() {
       {/* Signup form with full name, email, and password fields */}
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div>
+          {errors.fullName && (
+            <div className="mb-2 text-sm text-red-600 font-medium">
+              {errors.fullName}
+            </div>
+          )}
           <label
             htmlFor="fullName"
             className="block text-sm font-medium text-gray-700"
@@ -94,13 +118,20 @@ export default function SignupForm() {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className={`block w-full pl-10 pr-3 py-2 border ${
+                errors.fullName ? "border-red-500" : "border-gray-300"
+              } rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
               placeholder="John Doe"
             />
           </div>
         </div>
 
         <div>
+          {errors.email && (
+            <div className="mb-2 text-sm text-red-600 font-medium">
+              {errors.email}
+            </div>
+          )}
           <label
             htmlFor="phone"
             className="block text-sm font-medium text-gray-700"
@@ -124,11 +155,16 @@ export default function SignupForm() {
         </div>
 
         <div>
+          {errors.email && (
+            <div className="mb-2 text-sm text-red-600 font-medium">
+              {errors.email}
+            </div>
+          )}
           <label
             htmlFor="email"
             className="block text-sm font-medium text-gray-700"
           >
-            Email address
+            Gmail Address
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -142,13 +178,20 @@ export default function SignupForm() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="you@example.com"
+              className={`block w-full pl-10 pr-3 py-2 border ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              } rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+              placeholder="yourname@gmail.com"
             />
           </div>
         </div>
 
         <div>
+          {errors.password && (
+            <div className="mb-2 text-sm text-red-600 font-medium">
+              {errors.password}
+            </div>
+          )}
           <label
             htmlFor="password"
             className="block text-sm font-medium text-gray-700"
@@ -170,7 +213,9 @@ export default function SignupForm() {
                 setPassword(e.target.value);
                 checkPasswordStrength(e.target.value);
               }}
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className={`block w-full pl-10 pr-3 py-2 border ${
+                errors.password ? "border-red-500" : "border-gray-300"
+              } rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
               placeholder="••••••••"
             />
           </div>
