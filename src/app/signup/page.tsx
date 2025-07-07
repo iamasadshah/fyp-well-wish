@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import Toast from "@/components/ui/Toast";
+import SignupForm from "@/components/auth/SignupForm";
 
 interface ToastState {
   message: string;
@@ -59,13 +60,7 @@ export default function SignupPage() {
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <button
-            onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-          >
-            <FcGoogle className="h-5 w-5 mr-2" />
-            Sign up with Google
-          </button>
+          <SignupForm />
         </div>
       </div>
       {toast && (

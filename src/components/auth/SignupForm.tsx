@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { FiUser, FiMail, FiLock } from "react-icons/fi";
+import { FiUser, FiMail, FiLock, FiPhone } from "react-icons/fi";
 import Toast from "../ui/Toast";
 
 interface ToastState {
@@ -20,14 +20,36 @@ export default function SignupForm() {
   const [toast, setToast] = useState<ToastState | null>(null);
   const { signUp } = useAuth();
   const router = useRouter();
+  const [phone, setPhone] = useState("");
+  const [passwordStrength, setPasswordStrength] = useState("");
+
+  // Password strength checker
+  const checkPasswordStrength = (pwd: string) => {
+    let strength = "";
+    if (pwd.length < 8) strength = "Too short";
+    else if (!/[A-Z]/.test(pwd)) strength = "Add uppercase letter";
+    else if (!/[a-z]/.test(pwd)) strength = "Add lowercase letter";
+    else if (!/[0-9]/.test(pwd)) strength = "Add a number";
+    else if (!/[^A-Za-z0-9]/.test(pwd)) strength = "Add a special character";
+    else strength = "Strong";
+    setPasswordStrength(strength);
+    return strength === "Strong";
+  };
 
   // Handles form submission and registration
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
+    if (!checkPasswordStrength(password)) {
+      setToast({ message: "Password is not strong enough.", type: "error" });
+      setIsLoading(false);
+      return;
+    }
     try {
-      const { error } = await signUp(email, password, { full_name: fullName });
+      const { error } = await signUp(email, password, {
+        full_name: fullName,
+        phone,
+      });
       if (error) {
         const errorMessage =
           error instanceof Error ? error.message : "Failed to sign up";
@@ -37,7 +59,7 @@ export default function SignupForm() {
         });
         return;
       }
-      router.push("/profile"); // Redirect to profile on success
+      router.push("/profile");
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "An unexpected error occurred";
@@ -74,6 +96,29 @@ export default function SignupForm() {
               onChange={(e) => setFullName(e.target.value)}
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               placeholder="John Doe"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label
+            htmlFor="phone"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Phone (optional)
+          </label>
+          <div className="mt-1 relative rounded-md shadow-sm">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FiPhone className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="e.g. +1234567890"
             />
           </div>
         </div>
@@ -121,11 +166,25 @@ export default function SignupForm() {
               autoComplete="new-password"
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                checkPasswordStrength(e.target.value);
+              }}
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               placeholder="••••••••"
             />
           </div>
+          {password && (
+            <p
+              className={`mt-1 text-xs ${
+                passwordStrength === "Strong"
+                  ? "text-green-600"
+                  : "text-red-500"
+              }`}
+            >
+              Password strength: {passwordStrength}
+            </p>
+          )}
         </div>
 
         {/* Submit button */}

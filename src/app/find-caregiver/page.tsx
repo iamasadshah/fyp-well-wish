@@ -569,7 +569,9 @@ export default function FindCaregiver() {
                       </div>
                     </div>
 
-                    <p className="text-gray-600 mb-4">{caregiver.bio}</p>
+                    <p className="text-gray-600 mb-4 break-words max-h-32 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 rounded">
+                      {caregiver.bio}
+                    </p>
 
                     <div className="space-y-2 mb-6">
                       <div className="flex items-center gap-2">
