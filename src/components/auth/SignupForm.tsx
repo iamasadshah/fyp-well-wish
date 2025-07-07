@@ -27,6 +27,8 @@ export default function SignupForm() {
     email?: string;
     password?: string;
   }>({});
+  // Add a new state for top-level form error
+  const [formError, setFormError] = useState<string | null>(null);
 
   // Password strength checker
   const checkPasswordStrength = (pwd: string) => {
@@ -57,10 +59,13 @@ export default function SignupForm() {
   // Handles form submission and registration
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     if (!validate()) return;
     setIsLoading(true);
     if (!checkPasswordStrength(password)) {
-      setToast({ message: "Password is not strong enough.", type: "error" });
+      setFormError(
+        "Your password is not strong enough. Please follow the password requirements."
+      );
       setIsLoading(false);
       return;
     }
@@ -71,21 +76,20 @@ export default function SignupForm() {
       });
       if (error) {
         const errorMessage =
-          error instanceof Error ? error.message : "Failed to sign up";
-        setToast({
-          message: errorMessage,
-          type: "error",
-        });
+          error instanceof Error
+            ? error.message
+            : "Signup failed. Please check your details and try again.";
+        setFormError(errorMessage);
+        setIsLoading(false);
         return;
       }
       router.push("/profile");
     } catch (error: unknown) {
       const errorMessage =
-        error instanceof Error ? error.message : "An unexpected error occurred";
-      setToast({
-        message: errorMessage,
-        type: "error",
-      });
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred. Please try again.";
+      setFormError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -95,6 +99,11 @@ export default function SignupForm() {
     <>
       {/* Signup form with full name, email, and password fields */}
       <form className="space-y-6" onSubmit={handleSubmit}>
+        {formError && (
+          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-red-700 font-semibold text-center shadow-sm">
+            {formError}
+          </div>
+        )}
         <div>
           {errors.fullName && (
             <div className="mb-2 text-sm text-red-600 font-medium">

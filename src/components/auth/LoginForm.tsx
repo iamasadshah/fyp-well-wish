@@ -20,31 +20,33 @@ export default function LoginForm() {
   const [toast, setToast] = useState<ToastState | null>(null);
   const { signIn } = useAuth();
   const router = useRouter();
+  // Add a new state for top-level form error
+  const [formError, setFormError] = useState<string | null>(null);
 
   // Handles form submission and authentication
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError(null);
     setIsLoading(true);
 
     try {
       const { error } = await signIn(email, password);
       if (error) {
         const errorMessage =
-          error instanceof Error ? error.message : "Failed to sign in";
-        setToast({
-          message: errorMessage,
-          type: "error",
-        });
+          error instanceof Error
+            ? error.message
+            : "Invalid email or password. Please try again.";
+        setFormError(errorMessage);
+        setIsLoading(false);
         return;
       }
       router.push("/profile"); // Redirect to profile on success
     } catch (error: unknown) {
       const errorMessage =
-        error instanceof Error ? error.message : "An unexpected error occurred";
-      setToast({
-        message: errorMessage,
-        type: "error",
-      });
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred. Please try again.";
+      setFormError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -54,6 +56,11 @@ export default function LoginForm() {
     <>
       {/* Login form with email and password fields */}
       <form className="space-y-6" onSubmit={handleSubmit}>
+        {formError && (
+          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-red-700 font-semibold text-center shadow-sm">
+            {formError}
+          </div>
+        )}
         <div>
           <label
             htmlFor="email"
